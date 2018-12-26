@@ -28,27 +28,37 @@ function train() {
   let learning_rate = 0.2;
   for (let iter = 0; iter < 50000; iter++) {
 
+    // pick a random point
     let random_idx = Math.floor(Math.random() * all_points.length);
     let point = all_points[random_idx];
-    let target = point[2];
+    let target = point[2]; // target stored in 3rd coord of points
 
+    // feed forward
     let z = w1 * point[0] + w2 * point[1] + b;
     let pred = sigmoid(z);
 
+    // compare the model prediction with the target
     let cost = (pred - target) ** 2;
 
+    // find the slope of the cost w.r.t. each parameter (w1, w2, b)
+    // bring derivative through square function
     let dcost_dpred = 2 * (pred - target);
 
+    // bring derivative through sigmoid
+    // derivative of sigmoid can be written using more sigmoids
+    // d/dz sigmoid(z) = sigmoid(z)*(1-sigmoid(z))
     let dpred_dz = sigmoid(z) * (1 - sigmoid(z));
 
     let dz_dw1 = point[0];
     let dz_dw2 = point[1];
     let dz_db = 1;
 
+    // get the partial derivatives using the chain rule and chaning the cost through square and sigmoid function
     let dcost_dw1 = dcost_dpred * dpred_dz * dz_dw1;
     let dcost_dw2 = dcost_dpred * dpred_dz * dz_dw2;
     let dcost_db =  dcost_dpred * dpred_dz * dz_db;
 
+    // update the parameters
     w1 -= learning_rate * dcost_dw1;
     w2 -= learning_rate * dcost_dw2;
     b -= learning_rate * dcost_db;
